@@ -1,175 +1,184 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#0a1020">
-  <title>Atlas de Miologia</title>
-  <link rel="manifest" href="manifest.json">
-  <style>
-    :root{
-      --bg:#0a1020; --bg2:#101933; --card:#121d3a; --line:rgba(255,255,255,.10);
-      --text:#eef5ff; --muted:#a9bad3; --cyan:#74d8ff; --purple:#a98cff; --pink:#ff93c2;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:var(--text);
-      background:linear-gradient(180deg,var(--bg),var(--bg2)); min-height:100vh;
-    }
-    header{padding:18px 16px; position:sticky; top:0; z-index:5; background:rgba(10,16,32,.92); backdrop-filter: blur(10px); border-bottom:1px solid var(--line);}
-    h1{margin:0; font-size:1.35rem}
-    .sub{margin-top:6px; color:var(--muted); font-size:.95rem}
-    .wrap{max-width:980px; margin:0 auto; padding:16px}
-    .search{
-      width:100%; margin-top:14px; padding:14px 16px; border-radius:16px; border:1px solid var(--line);
-      background:#0d1730; color:var(--text); font-size:1rem; outline:none;
-    }
-    .list{display:grid; gap:10px; padding-bottom:24px}
-    .item{
-      width:100%; text-align:left; border:none; border-radius:18px; padding:16px; cursor:pointer;
-      background:linear-gradient(180deg,rgba(18,29,58,.98),rgba(12,18,36,.98));
-      color:var(--text); border:1px solid var(--line); box-shadow:0 12px 24px rgba(0,0,0,.18);
-      font-size:1rem; font-weight:700;
-    }
-    .item small{display:block; color:var(--muted); margin-top:6px; font-weight:500}
-    .screen{display:none}
-    .screen.active{display:block}
-    .hero-card, .panel{
-      border:1px solid var(--line); border-radius:24px; background:linear-gradient(180deg,rgba(18,29,58,.96),rgba(10,16,32,.94));
-      box-shadow:0 18px 36px rgba(0,0,0,.22);
-    }
-    .hero-card{padding:20px}
-    .tabs{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px}
-    .tab{
-      border:none; border-radius:14px; padding:12px 14px; cursor:pointer; font-weight:800;
-      background:rgba(255,255,255,.06); color:var(--text); border:1px solid rgba(255,255,255,.08);
-    }
-    .tab.active{background:linear-gradient(135deg,rgba(116,216,255,.20),rgba(169,140,255,.18)); border-color:rgba(116,216,255,.28)}
-    .panel{padding:18px; margin-top:16px}
-    .panel h3{margin:0 0 10px; color:var(--cyan)}
-    .value{white-space:pre-wrap; line-height:1.55}
-    .back{
-      margin-top:16px; border:none; border-radius:16px; padding:14px 18px; cursor:pointer; font-weight:800;
-      background:linear-gradient(135deg,#ffc1da,var(--pink)); color:#4b1230;
-    }
-    .empty{color:var(--muted)}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a1020">
+<title>Atlas de Miologia</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root {
+  --bg:#0a1020; --bg2:#101933; --line:rgba(255,255,255,.10);
+  --text:#eef5ff; --muted:#a9bad3; --cyan:#74d8ff; --pink:#ff93c2;
+}
+*{box-sizing:border-box}
+body {
+  margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  color:var(--text); background:linear-gradient(180deg,var(--bg),var(--bg2)); min-height:100vh;
+}
+header {
+  padding:18px 16px; position:sticky; top:0; z-index:10;
+  background:rgba(10,16,32,.94); backdrop-filter: blur(10px); border-bottom:1px solid var(--line);
+}
+.wrap{max-width:980px; margin:0 auto; padding:16px}
+h1{margin:0; font-size:1.35rem}
+.sub{margin-top:6px; color:var(--muted); font-size:.95rem}
+.search {
+  width:100%; margin-top:14px; padding:14px 16px; border-radius:16px; border:1px solid var(--line);
+  background:#0d1730; color:var(--text); font-size:1rem; outline:none;
+}
+.list{display:grid; gap:10px; padding-bottom:24px}
+.item {
+  width:100%; text-align:left; border:none; border-radius:18px; padding:16px; cursor:pointer;
+  background:linear-gradient(180deg,rgba(18,29,58,.98),rgba(12,18,36,.98));
+  color:var(--text); border:1px solid var(--line); box-shadow:0 12px 24px rgba(0,0,0,.18);
+  font-size:1rem; font-weight:700;
+}
+.item small{display:block; color:var(--muted); margin-top:6px; font-weight:500}
+.screen{display:none}
+.screen.active{display:block}
+.hero-card,.panel {
+  border:1px solid var(--line); border-radius:24px;
+  background:linear-gradient(180deg,rgba(18,29,58,.96),rgba(10,16,32,.94));
+  box-shadow:0 18px 36px rgba(0,0,0,.22);
+}
+.hero-card{padding:20px}
+.tabs{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px}
+.tab {
+  border:none; border-radius:14px; padding:12px 14px; cursor:pointer; font-weight:800;
+  background:rgba(255,255,255,.06); color:var(--text); border:1px solid rgba(255,255,255,.08);
+}
+.tab.active{background:linear-gradient(135deg,rgba(116,216,255,.20),rgba(255,147,194,.18)); border-color:rgba(116,216,255,.28)}
+.panel{padding:18px; margin-top:16px}
+.panel h3{margin:0 0 10px; color:var(--cyan)}
+.value{white-space:pre-wrap; line-height:1.55}
+.back {
+  margin-top:16px; border:none; border-radius:16px; padding:14px 18px; cursor:pointer; font-weight:800;
+  background:linear-gradient(135deg,#ffc1da,var(--pink)); color:#4b1230;
+}
+.empty{color:var(--muted)}
+.badge {
+  display:inline-block; padding:6px 10px; border-radius:999px; margin-bottom:8px;
+  background:rgba(116,216,255,.12); color:var(--cyan); border:1px solid rgba(116,216,255,.22);
+}
+</style>
 </head>
 <body>
-  <header>
-    <div class="wrap">
-      <h1>Atlas de Miologia</h1>
-      <div class="sub">1 músculo por tela • 3 abas anatômicas • uso offline</div>
-      <input id="search" class="search" placeholder="Buscar músculo, estrutura ou número do roteiro">
+<header>
+  <div class="wrap">
+    <h1>Atlas de Miologia</h1>
+    <div class="sub">1 músculo por tela • 3 abas anatômicas • uso offline</div>
+    <input id="search" class="search" placeholder="Buscar músculo, estrutura ou número do roteiro">
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="listaScreen" class="screen active">
+    <div id="lista" class="list"></div>
+  </section>
+
+  <section id="detalheScreen" class="screen">
+    <div class="hero-card">
+      <div id="musculoNumero" class="badge"></div>
+      <h2 id="musculoNome" style="margin:.4rem 0 0;font-size:1.5rem;"></h2>
+      <div class="tabs">
+        <button class="tab active" data-tab="acao">Ação</button>
+        <button class="tab" data-tab="fixacao">Fixação proximal</button>
+        <button class="tab" data-tab="insercao">Inserção</button>
+      </div>
     </div>
-  </header>
 
-  <main class="wrap">
-    <section id="listaScreen" class="screen active">
-      <div id="lista" class="list"></div>
-    </section>
+    <div class="panel">
+      <h3 id="tituloAba">Ação</h3>
+      <div id="conteudoAba" class="value"></div>
+    </div>
 
-    <section id="detalheScreen" class="screen">
-      <div class="hero-card">
-        <div id="musculoNumero" class="sub"></div>
-        <h2 id="musculoNome" style="margin:.4rem 0 0;font-size:1.5rem;"></h2>
-        <div class="tabs">
-          <button class="tab active" data-tab="acao">Ação</button>
-          <button class="tab" data-tab="fixacao">Fixação proximal</button>
-          <button class="tab" data-tab="insercao">Inserção</button>
-        </div>
-      </div>
+    <button id="backBtn" class="back" type="button">← Voltar para a lista</button>
+  </section>
+</main>
 
-      <div class="panel">
-        <h3 id="tituloAba">Ação</h3>
-        <div id="conteudoAba" class="value"></div>
-      </div>
+<script>
+const MUSCULOS = [{"nome": "1. Ventre muscular", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "2. Tendão muscular", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "3. Aponeurose", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "4. Fáscia muscular", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "5. Septo intermuscular", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "6. Músculo de fibra paralela (ex.: m. sartório)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "7. Músculo de fibras oblíquas (ex.: m. oblíquo externo do abdome)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "8. Músculo semipeniforme (ex.: m. extensor longo dos dedos)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "9. Músculo peniforme (ex.: m. reto femoral)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "10. Músculo multipeniforme (ex.: m. deltoide)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "11. Músculo convergente ou triangular (ex.: m. peitoral maior)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "12. Músculo circular ou esfincteriano (ex.: m. orbicular do olho)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "13. Músculo curto (ex.: m. pronador quadrado)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "14. Músculo longo (ex.: m. sartório)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "15. Músculo plano (ex.: m. oblíquo externo do abdome)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "16. Músculo superficial (ex.: m. trapézio)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "17. Músculo profundo (ex.: m. transverso do abdome)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "18. Músculo fusiforme (ex.: m. tibial anterior)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "19. Músculo bíceps (ex.: m. bíceps braquial, m. bíceps femoral)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "20. Músculo tríceps (ex.: m. tríceps braquial, m. tríceps sural)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "21. Músculo quadríceps (ex.: m. quadríceps femoral)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "22. Músculo bicaudado (ex.: m. flexor curto do hálux)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "23. Músculo policaudado (ex.: m. extensor dos dedos)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "24. Músculo biventre (ex.: m. digástrico)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "25. Músculo poliventre (ex.: m. reto do abdome)", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "26. Trapézio - Parte descendente", "acao": "Eleva a escápula e participa da rotação superior da escápula.", "fixacao": "Protuberância occipital externa, terço medial da linha nucal superior do osso occipital e ligamento nucal.", "insercao": "Terço lateral da clavícula."}, {"nome": "27. Trapézio - Parte transversa", "acao": "Retração da escápula.", "fixacao": "Processos espinhosos das vértebras C7 a T3.", "insercao": "Acrômio e espinha da escápula."}, {"nome": "28. Trapézio - Parte ascendente", "acao": "Deprime a escápula e auxilia na rotação superior da escápula.", "fixacao": "Processos espinhosos das vértebras T4 a T12.", "insercao": "Extremidade medial da espinha da escápula."}, {"nome": "29. Latíssimo do dorso", "acao": "Extensão, adução e rotação medial do braço.", "fixacao": "Processos espinhosos de T7 a T12, fáscia toracolombar, crista ilíaca e costelas 9 a 12.", "insercao": "Assoalho do sulco intertubercular do úmero."}, {"nome": "30. Aponeurose toracolombar", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "31. Levantador da escápula", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "32. Romboide maior", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "33. Romboide menor", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "34. Serrátil posterior superior", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "35. Serrátil posterior inferior", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "36. Eretor da espinha", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "33. Espinal do tórax", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "34. Longuíssimo do tórax", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "35. Íliocostal do lombo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "36. Aponeurose do m. eretor da espinha", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "37. Semiespinal do tórax", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "38. Multífidos do tórax", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "39. Multífidos do lombo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "40. Rotadores do tórax", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "41. Rotadores do lombo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "42. Intertransversários do lombo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "43. Interespinais do tórax", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "44. Interespinais do lombo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "45. Levantadores das costelas", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "46. Peitoral maior - Parte clavicular", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "47. Peitoral maior - Parte esternocostal", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "48. Peitoral maior - Parte abdominal", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "49. Peitoral menor", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "50. Subclávio", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "51. Serrátil anterior", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "52. Serrátil posterior superior", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "53. Serrátil posterior inferior", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "54. Levantadores das costelas", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "55. Intercostais externos", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "56. Intercostais internos", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "57. Membrana intercostal interna", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "58. Membrana intercostal externa", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "59. Transverso do tórax", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "60. Subcostais", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "61. Diafragma", "acao": "Principal músculo da inspiração; aumenta o volume da cavidade torácica ao se contrair.", "fixacao": "Processo xifoide, cartilagens costais e costelas 7 a 12, corpos das vértebras L1 a L3.", "insercao": "Centro tendíneo do diafragma."}, {"nome": "62. Reto do abdome", "acao": "Flexiona o tronco, comprime as vísceras abdominais e estabiliza a pelve.", "fixacao": "Crista púbica e sínfise púbica.", "insercao": "Processo xifoide do esterno e cartilagens costais das costelas 5 a 7."}, {"nome": "a. Lâmina anterior da bainha do músculo reto do abdome", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "b. Lâmina posterior da bainha do músculo reto do abdome", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "c. Intersecções tendíneas do músculo reto do abdome", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "60. Oblíquo externo do abdome", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "61. Oblíquo interno do abdome", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "62. Linha alba", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "63. Transverso do abdome", "acao": "Comprime as vísceras abdominais, estabiliza o tronco e participa da expiração forçada.", "fixacao": "Faces internas das cartilagens costais 7 a 12, fáscia toracolombar, crista ilíaca e terço lateral do ligamento inguinal.", "insercao": "Linha alba, crista púbica e pecten do púbis."}, {"nome": "64. Quadrado do lombo", "acao": "Inclinação lateral da coluna lombar, estabilização da costela 12 e extensão do tronco quando ambos os lados se contraem.", "fixacao": "Crista ilíaca e ligamento iliolombar.", "insercao": "Borda inferior da costela 12 e processos transversos das vértebras L1 a L4."}, {"nome": "65. Deltoide - Parte clavicular", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "66. Deltoide - Parte acromial", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "67. Deltoide - Parte espinal", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "68. Supra-espinal", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "a. Fáscia supra-espinal", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "69. Infra-espinal", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "a. Fáscia infra-espinal", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "70. Redondo menor", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "a. Fáscia do m. redondo menor", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "71. Redondo maior", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "a. Fáscia do m. redondo maior", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "72. Subescapular", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "a. Fáscia subescapular", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "73. Coracobraquial", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "74. Bíceps braquial - Cabeça curta", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "75. Bíceps braquial - Cabeça longa", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "76. Aponeurose do m. bíceps braquial", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "77. Braquial", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "78. Tríceps braquial - Cabeça longa", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "79. Tríceps braquial - Cabeça curta", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "80. Tríceps braquial - Cabeça medial", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "81. Ancôneo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "82. Pronador redondo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "83. Pronador quadrado", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "84. Supinador", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "85. Palmar longo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "86. Flexor radial do carpo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "87. Flexor ulnar do carpo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "88. Flexor superficial dos dedos", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "89. Flexor profundo dos dedos", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "90. Flexor longo do polegar", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "91. Braquiorradial", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "92. Extensor radial longo do carpo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "93. Extensor radial curto do carpo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "94. Extensor ulnar do carpo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "95. Extensor dos dedos", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "96. Extensor do dedo mínimo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "97. Abdutor longo do polegar", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "98. Extensor curto do polegar", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "99. Extensor longo polegar", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "100. Extensor do indicador", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "101. Palmar curto", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "102. Abdutor do dedo mínimo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "103. Flexor curto do dedo mínimo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "104. Oponente do dedo mínimo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "105. Abdutor curto do polegar", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "106. Flexor curto do polegar", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "107. Oponente do polegar", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "108. Adutor do polegar", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "109. Lumbricais", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "110. Interósseos dorsais", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "111. Interósseos palmares", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "112. Íiopsoas", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "a. Ilíaco", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "b. Psoas maior", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "c. Psoas menor*", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "113. Pectíneo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "114. Sartório", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "115. Quadríceps femoral - Reto femoral", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "116. Quadríceps femoral - Vasto lateral", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "117. Quadríceps femoral - Vasto medial", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "118. Quadríceps femoral - Vasto intermédio", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "119. Adutor longo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "120. Adutor curto", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "121. Adutor magno", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "122. Grácil", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "123. Tibial anterior", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "124. Extensor longo dos dedos", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "125. Fibular terceiro", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "126. Extensor longo do hálux", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "127. Fibular longo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "128. Fibular curto", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "129. Tensor da fáscia lata", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "130. Glúteo máximo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "131. Glúteo médio", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "132. Glúteo mínimo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "133. Piriforme", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "134. Gêmeo superior", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "135. Obturador interno", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "136. Gêmeo inferior", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "137. Quadrado femoral", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "138. Bíceps femoral - Cabeça longa", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "139. Bíceps femoral - Cabeça curta", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "140. Semitendíneo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "141. Semimembranáceo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "142. Tríceps sural", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "a. Gastrocnêmio - cabeça medial", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "b. Gastrocnêmio - cabeça lateral", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "c. Sóleo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "d. Tendão do calcâneo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "143. Plantar", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "144. Poplíteo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "145. Flexor longo do hálux", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "146. Tibial posterior", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "147. Flexor longo dos dedos", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "148. Extensor curto dos dedos", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "149. Extensor curto do hálux", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "150. Aponeurose plantar", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "151. Flexor curto dos dedos", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "152. Abdutor do hálux", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "153. Abdutor do dedo mínimo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "154. Quadrado plantar", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "155. Tendões do m. flexor longo dos dedos", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "156. Lumbricais", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "157. Flexor curto do hálux - Cabeça medial", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "158. Tendão do flexor longo do hálux", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "159. Flexor curto do hálux - Cabeça lateral", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "160. Adutor do hálux - Cabeça oblíqua", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "161. Adutor do hálux - Cabeça transversa*", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "162. Flexor curto do dedo mínimo", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "163. Oponente do dedo mínimo m.", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "164. Interósseos dorsais", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}, {"nome": "165. Interósseos plantares", "acao": "Preenchimento disponível para este item.", "fixacao": "Preenchimento disponível para este item.", "insercao": "Preenchimento disponível para este item."}];
 
-      <button id="backBtn" class="back" type="button">← Voltar para a lista</button>
-    </section>
-  </main>
+const listaScreen = document.getElementById('listaScreen');
+const detalheScreen = document.getElementById('detalheScreen');
+const lista = document.getElementById('lista');
+const search = document.getElementById('search');
+const musculoNome = document.getElementById('musculoNome');
+const musculoNumero = document.getElementById('musculoNumero');
+const tituloAba = document.getElementById('tituloAba');
+const conteudoAba = document.getElementById('conteudoAba');
+const backBtn = document.getElementById('backBtn');
+const tabs = Array.from(document.querySelectorAll('.tab'));
 
-  <script src="data-musculos.js"></script>
-  <script>
-    const listaScreen = document.getElementById('listaScreen');
-    const detalheScreen = document.getElementById('detalheScreen');
-    const lista = document.getElementById('lista');
-    const search = document.getElementById('search');
-    const musculoNome = document.getElementById('musculoNome');
-    const musculoNumero = document.getElementById('musculoNumero');
-    const tituloAba = document.getElementById('tituloAba');
-    const conteudoAba = document.getElementById('conteudoAba');
-    const backBtn = document.getElementById('backBtn');
-    const tabs = Array.from(document.querySelectorAll('.tab'));
+let atual = null;
+let abaAtual = 'acao';
 
-    let atual = null;
-    let abaAtual = 'acao';
+function renderLista(q='') {
+  const termo = (q || '').toLowerCase().trim();
+  lista.innerHTML = '';
+  const filtrados = MUSCULOS.filter(m => m.nome.toLowerCase().includes(termo));
 
-    function renderLista(q=''){
-      const termo = (q || '').toLowerCase().trim();
-      lista.innerHTML = '';
-      const filtrados = MUSCULOS.filter(m => m.nome.toLowerCase().includes(termo));
+  if (!filtrados.length) {
+    lista.innerHTML = '<div class="panel empty">Nenhum item encontrado.</div>';
+    return;
+  }
 
-      if(!filtrados.length){
-        lista.innerHTML = '<div class="panel empty">Nenhum item encontrado.</div>';
-        return;
-      }
+  filtrados.forEach((m) => {
+    const btn = document.createElement('button');
+    btn.className = 'item';
+    btn.type = 'button';
+    btn.innerHTML = m.nome + '<small>Toque para abrir a ficha anatômica</small>';
+    btn.addEventListener('click', () => abrirMusculo(m));
+    lista.appendChild(btn);
+  });
+}
 
-      filtrados.forEach((m, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'item';
-        btn.type = 'button';
-        const numero = (m.nome.split('.')[0] || '').trim();
-        btn.innerHTML = `${m.nome}<small>Toque para abrir a ficha anatômica</small>`;
-        btn.addEventListener('click', () => abrirMusculo(m));
-        lista.appendChild(btn);
-      });
-    }
+function abrirMusculo(m) {
+  atual = m;
+  abaAtual = 'acao';
+  listaScreen.classList.remove('active');
+  detalheScreen.classList.add('active');
+  musculoNome.textContent = m.nome;
+  const found = m.nome.match(/^\s*([0-9]+|[a-z])\./);
+  musculoNumero.textContent = found ? ('Roteiro: ' + found[1]) : 'Roteiro prático';
+  tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === 'acao'));
+  renderAba();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
 
-    function abrirMusculo(m){
-      atual = m;
-      abaAtual = 'acao';
-      listaScreen.classList.remove('active');
-      detalheScreen.classList.add('active');
-      musculoNome.textContent = m.nome.replace(/^\s*[a-z]?\.?\s*/, '');
-      const num = (m.nome.match(/^\s*([0-9]+|[a-z])\./) || [,''])[1];
-      musculoNumero.textContent = num ? 'Roteiro: ' + num : 'Roteiro prático';
-      tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === 'acao'));
-      renderAba();
-      window.scrollTo({top:0, behavior:'smooth'});
-    }
+function renderAba() {
+  if (!atual) return;
+  const mapa = {
+    acao: ['Ação', atual.acao],
+    fixacao: ['Fixação proximal', atual.fixacao],
+    insercao: ['Inserção', atual.insercao]
+  };
+  tituloAba.textContent = mapa[abaAtual][0];
+  conteudoAba.textContent = mapa[abaAtual][1] || '—';
+}
 
-    function renderAba(){
-      if(!atual) return;
-      const mapa = {
-        acao: ['Ação', atual.acao],
-        fixacao: ['Fixação proximal', atual.fixacao],
-        insercao: ['Inserção', atual.insercao]
-      };
-      tituloAba.textContent = mapa[abaAtual][0];
-      conteudoAba.textContent = mapa[abaAtual][1] || '—';
-    }
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    abaAtual = tab.dataset.tab;
+    tabs.forEach(t => t.classList.toggle('active', t === tab));
+    renderAba();
+  });
+});
 
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        abaAtual = tab.dataset.tab;
-        tabs.forEach(t => t.classList.toggle('active', t === tab));
-        renderAba();
-      });
-    });
+backBtn.addEventListener('click', () => {
+  detalheScreen.classList.remove('active');
+  listaScreen.classList.add('active');
+});
 
-    backBtn.addEventListener('click', () => {
-      detalheScreen.classList.remove('active');
-      listaScreen.classList.add('active');
-    });
+search.addEventListener('input', e => renderLista(e.target.value));
+renderLista();
 
-    search.addEventListener('input', e => renderLista(e.target.value));
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.error));
-    }
-
-    renderLista();
-  </script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(console.error);
+  });
+}
+</script>
 </body>
 </html>
