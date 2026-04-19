@@ -10,8 +10,15 @@
   <meta name="apple-mobile-web-app-title" content="Miologia">
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230f1117' width='192' height='192'/><circle cx='96' cy='96' r='80' fill='%23e8cda0'/><text x='50%' y='55%' font-size='100' font-family='serif' font-weight='bold' fill='%230f1117' text-anchor='middle' dominant-baseline='middle'>M</text></svg>">
-  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Miologia%20Flashcards%20Pro%22,%22short_name%22:%22Miologia%22,%22description%22:%22Aprenda%20anatomia%20com%20flashcards%20interativos%22,%22start_url%22:%22/%22,%22scope%22:%22/%22,%22display%22:%22standalone%22,%22orientation%22:%22portrait-primary%22,%22background_color%22:%22%230f1117%22,%22theme_color%22:%22%23e8cda0%22,%22categories%22:[%22education%22],%22screenshots%22:[{%22src%22:%22data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 192 192%27><rect fill=%27%230f1117%27 width=%27192%27 height=%27192%27/><circle cx=%2796%27 cy=%2796%27 r=%2780%27 fill=%27%23e8cda0%27/></svg>%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22}],%22icons%22:[{%22src%22:%22data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 192 192%27><rect fill=%27%230f1117%27 width=%27192%27 height=%27192%27/><circle cx=%2796%27 cy=%2796%27 r=%2780%27 fill=%27%23e8cda0%27/><text x=%2750%25%27 y=%2755%25%27 font-size=%27100%27 font-family=%27serif%27 font-weight=%27bold%27 fill=%27%230f1117%27 text-anchor=%27middle%27 dominant-baseline=%27middle%27>M</text></svg>%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22,%22purpose%22:%22any%22}]}">
-  <title>Miologia Flashcards Pro</title>
+ <script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch((err) => {
+      console.error("Erro ao registrar o service worker:", err);
+    });
+  });
+}
+</script>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <script src="/_sdk/element_sdk.js"></script>
@@ -455,4 +462,19 @@ updateDataAndFilters();
 lucide.createIcons();
 </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ee996f4931c646e',t:'MTc3NjU3NzM4NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>
+
+if ("serviceWorker" in navigator) {
+
+window.addEventListener("load", () => {
+
+navigator.serviceWorker.register("./sw.js")
+.then(() => console.log("PWA ativo"))
+.catch(err => console.log(err))
+
+})
+
+}
+
+</script>
 </html>
