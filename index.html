@@ -7,67 +7,15 @@
 <title>Atlas de Miologia</title>
 <link rel="manifest" href="manifest.json">
 <style>
-body{
-font-family:Arial,Helvetica,sans-serif;
-background:#0a1020;
-color:white;
-margin:0;
-padding:0;
-}
-
-header{
-padding:20px;
-text-align:center;
-background:#111a33;
-font-weight:bold;
-}
-
-#menu{
-padding:20px;
-display:flex;
-flex-direction:column;
-gap:10px;
-}
-
-button{
-padding:14px;
-border:none;
-border-radius:12px;
-font-size:16px;
-cursor:pointer;
-background:#2a4cff;
-color:white;
-}
-
-#muscleView{
-display:none;
-padding:20px;
-}
-
-.tabs{
-display:flex;
-gap:10px;
-margin-top:15px;
-}
-
-.tab{
-padding:10px;
-background:#1c2b55;
-border-radius:10px;
-cursor:pointer;
-}
-
-.tabContent{
-margin-top:15px;
-background:#121d3a;
-padding:15px;
-border-radius:12px;
-}
-
-.back{
-margin-top:20px;
-background:#ff4c6a;
-}
+body{font-family:Arial;background:#0a1020;color:white;margin:0}
+header{padding:20px;text-align:center;background:#111a33;font-weight:bold}
+#menu{padding:20px;display:flex;flex-direction:column;gap:10px}
+button{padding:14px;border:none;border-radius:12px;font-size:16px;cursor:pointer;background:#2a4cff;color:white}
+#muscleView{display:none;padding:20px}
+.tabs{display:flex;gap:10px;margin-top:15px}
+.tab{padding:10px;background:#1c2b55;border-radius:10px;cursor:pointer}
+.tabContent{margin-top:15px;background:#121d3a;padding:15px;border-radius:12px}
+.back{margin-top:20px;background:#ff4c6a}
 </style>
 </head>
 
@@ -89,61 +37,45 @@ background:#ff4c6a;
 <div id="tabContent" class="tabContent"></div>
 
 <button class="back" onclick="back()">Voltar</button>
-
 </div>
 
 <script src="data-musculos.js"></script>
 
 <script>
-
-const menu = document.getElementById("menu")
-const muscleView = document.getElementById("muscleView")
-const title = document.getElementById("muscleTitle")
-const tabContent = document.getElementById("tabContent")
-
+const menu=document.getElementById("menu")
+const muscleView=document.getElementById("muscleView")
+const title=document.getElementById("muscleTitle")
+const tabContent=document.getElementById("tabContent")
 let current
 
 muscles.forEach(m=>{
-
 let b=document.createElement("button")
 b.innerText=m.nome
-
 b.onclick=()=>{
-
 current=m
 menu.style.display="none"
 muscleView.style.display="block"
 title.innerText=m.nome
-
 showTab("acao")
-
 }
-
 menu.appendChild(b)
-
 })
 
 function showTab(t){
-
 if(!current)return
-
-if(t==="acao")tabContent.innerText=current.acao
-if(t==="origem")tabContent.innerText=current.origem
-if(t==="insercao")tabContent.innerText=current.insercao
-
+if(t==="acao")tabContent.innerText=current.acao||"—"
+if(t==="origem")tabContent.innerText=current.origem||"—"
+if(t==="insercao")tabContent.innerText=current.insercao||"—"
 }
 
 function back(){
-
 muscleView.style.display="none"
 menu.style.display="flex"
-
 }
 
 if("serviceWorker" in navigator){
 navigator.serviceWorker.register("sw.js")
 }
-
 </script>
 
 </body>
