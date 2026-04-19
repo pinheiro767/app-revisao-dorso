@@ -1,480 +1,150 @@
-<!doctype html>
-<html lang="pt-BR" class="h-full scroll-smooth">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
-  <meta name="theme-color" content="#0f1117">
-  <meta name="description" content="PWA de Anatomia Muscular com Câmera, Importação e Modo Noturno">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Miologia">
-  <meta name="mobile-web-app-capable" content="yes">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230f1117' width='192' height='192'/><circle cx='96' cy='96' r='80' fill='%23e8cda0'/><text x='50%' y='55%' font-size='100' font-family='serif' font-weight='bold' fill='%230f1117' text-anchor='middle' dominant-baseline='middle'>M</text></svg>">
- <script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch((err) => {
-      console.error("Erro ao registrar o service worker:", err);
-    });
-  });
-}
-</script>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:wght@600;700;800&amp;display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
-    body { font-family: 'Inter', sans-serif; }
-    
-    /* Light/Dark Mode */
-    :root {
-      --bg-primary: #0f1117;
-      --bg-secondary: #1a1d2b;
-      --bg-tertiary: #22263a;
-      --text-primary: #f0f0f4;
-      --text-secondary: #c8c9d2;
-      --text-muted: #6b7084;
-      --accent: #e8cda0;
-      --accent-dark: #d4b89a;
-      --success: #10b981;
-      --error: #ef4444;
-    }
-    
-    body.light-mode {
-      --bg-primary: #ffffff;
-      --bg-secondary: #f5f5f7;
-      --bg-tertiary: #efefef;
-      --text-primary: #1a1a1a;
-      --text-secondary: #4a4a4a;
-      --text-muted: #888888;
-      --accent: #d4a574;
-      --accent-dark: #c09560;
-    }
-    
-    body { background: var(--bg-primary); color: var(--text-primary); transition: background 0.3s, color 0.3s; }
-    
-    .card-flip { perspective: 1200px; }
-    .card-inner { transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); transform-style: preserve-3d; position: relative; }
-    .card-inner.flipped { transform: rotateY(180deg); }
-    .card-front, .card-back { backface-visibility: hidden; position: absolute; inset: 0; border-radius: 1.5rem; }
-    .card-back { transform: rotateY(180deg); }
-    
-    .tag { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; transition: all 0.2s; }
-    .filter-btn { transition: all 0.25s; cursor: pointer; }
-    .filter-btn:hover { transform: scale(1.05); }
-    .filter-btn.active { transform: scale(1.08); box-shadow: 0 4px 12px rgba(232, 205, 160, 0.3); }
-    
-    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    
-    .animate-in { animation: slideUp 0.4s ease-out; }
-    .animate-down { animation: slideDown 0.4s ease-out; }
-    .toast { animation: slideUp 0.3s ease-out; }
-    .spinner { animation: spin 1s linear infinite; }
-    
-    .card-photo { max-width: 100%; max-height: 280px; border-radius: 1rem; margin-bottom: 1.5rem; object-fit: cover; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); }
-    
-    .btn-floating { position: relative; overflow: hidden; }
-    .btn-floating::before { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.2); transform: translate(-50%, -50%); transition: width 0.6s, height 0.6s; }
-    .btn-floating:active::before { width: 300px; height: 300px; }
-    
-    .header-bar { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
-    .card-container { box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15); }
-    
-    .progress-ring { transition: stroke-dashoffset 0.35s; transform: rotate(-90deg); transform-origin: 50% 50%; }
-    
-    /* Responsive */
-    @media (max-width: 640px) {
-      .card-photo { max-height: 200px; }
-      .tag { font-size: 0.65rem; padding: 3px 8px; }
-    }
-  </style>
-  <style>body { box-sizing: border-box; }</style>
- </head>
- <body class="h-full" id="app-body">
-  <div id="app" class="h-full w-full flex flex-col" style="background:var(--bg-primary);"><!-- Header -->
-   <header class="header-bar px-4 py-3 flex items-center justify-between flex-shrink-0" style="background:var(--bg-secondary); border-bottom: 1px solid var(--bg-tertiary);">
-    <div class="flex-1">
-     <h1 id="main-title" class="text-2xl font-bold" style="font-family:'Playfair Display',serif; color:var(--accent);">Miologia</h1>
-     <p class="text-xs mt-0.5" style="color:var(--text-muted);">Aprenda Anatomia</p>
-    </div>
-    <div class="flex items-center gap-2"><button id="btn-theme" class="w-10 h-10 rounded-full flex items-center justify-center btn-floating" style="background:var(--bg-tertiary); border:1px solid var(--bg-primary); color:var(--accent);" title="Alternar tema"> <i data-lucide="sun" style="width:18px;height:18px;"></i> </button> <button id="btn-camera" class="w-10 h-10 rounded-full flex items-center justify-center btn-floating" style="background:var(--bg-tertiary); border:1px solid var(--bg-primary); color:var(--accent);" title="Tirar foto"> <i data-lucide="camera" style="width:18px;height:18px;"></i> </button> <button id="btn-import" class="w-10 h-10 rounded-full flex items-center justify-center btn-floating" style="background:var(--bg-tertiary); border:1px solid var(--bg-primary); color:var(--accent);" title="Importar arquivo"> <i data-lucide="upload" style="width:18px;height:18px;"></i> </button>
-     <div id="counter" class="text-right ml-3"><span class="text-xl font-bold" style="color:var(--accent);" id="current-num">1</span> <span class="text-xs" style="color:var(--text-muted);"> / <span id="total-num">74</span></span>
-     </div>
-    </div>
-   </header><!-- Filters -->
-   <div class="px-4 py-3 flex flex-wrap gap-2 overflow-x-auto flex-shrink-0" id="filters" style="background:var(--bg-primary); border-bottom:1px solid var(--bg-secondary);"></div><!-- Main Content -->
-   <main class="flex-1 overflow-auto flex flex-col items-center justify-center px-4 py-6">
-    <div class="card-flip w-full max-w-2xl" style="height: 420px; perspective: 1200px;" id="card-container">
-     <div class="card-inner w-full h-full relative" id="card-inner"><!-- Card Front -->
-      <div class="card-front flex flex-col justify-between p-6 w-full h-full" id="card-front" style="background:linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary)); border:2px solid var(--bg-tertiary); cursor:pointer;">
-       <div class="flex-1 overflow-y-auto">
-        <div id="photo-front" class="mb-4"></div>
-        <div class="flex gap-2 mb-4 flex-wrap" id="card-tags"></div>
-        <h2 id="card-name" class="text-3xl font-bold mb-3" style="color:var(--text-primary); font-family:'Playfair Display',serif;"></h2>
-        <p id="card-type-label" class="tag inline-block" style="background:var(--accent); color:var(--bg-primary);"></p>
-       </div>
-       <div class="flex items-center justify-between mt-6 pt-4" style="border-top:1px solid var(--bg-tertiary);">
-        <div class="flex gap-2">
-         <button id="btn-card-camera" class="w-8 h-8 rounded-full flex items-center justify-center btn-floating" style="background:var(--accent); color:var(--bg-primary); border:none;" title="Tirar foto deste card"><i data-lucide="camera" style="width:16px;height:16px;"></i></button> <button id="btn-card-import" class="w-8 h-8 rounded-full flex items-center justify-center btn-floating" style="background:var(--accent); color:var(--bg-primary); border:none;" title="Importar foto para este card"><i data-lucide="upload" style="width:16px;height:16px;"></i></button>
-        </div>
-        <div class="flex items-center gap-2">
-         <p class="text-xs" style="color:var(--text-muted);">Toque para virar</p><i data-lucide="rotate-cw" style="color:var(--accent); width:18px; height:18px;"></i>
-        </div>
-       </div>
-      </div><!-- Card Back -->
-      <div class="card-back flex flex-col overflow-y-auto p-6 w-full h-full" id="card-back" style="background:linear-gradient(135deg, #1a1d2b, #2a2e42); border:2px solid var(--bg-tertiary); cursor:pointer;">
-       <div id="photo-back" class="mb-4"></div>
-       <div id="card-details" class="flex-1 space-y-4 text-sm"></div>
-       <div class="flex items-center justify-between mt-6 pt-4" style="border-top:1px solid var(--bg-tertiary);">
-        <p class="text-xs" style="color:var(--text-muted);">Toque para voltar</p><i data-lucide="rotate-ccw" style="color:var(--accent); width:18px; height:18px;"></i>
-       </div>
-      </div>
-     </div>
-    </div><!-- Navigation Controls -->
-    <div class="flex items-center justify-center gap-3 mt-8 flex-shrink-0"><button id="btn-prev" class="w-12 h-12 rounded-full flex items-center justify-center btn-floating" style="background:var(--bg-secondary); border:2px solid var(--accent); color:var(--accent);" aria-label="Anterior"> <i data-lucide="chevron-left" style="width:24px;height:24px;"></i> </button> <button id="btn-shuffle" class="px-6 h-12 rounded-full flex items-center gap-2 font-semibold btn-floating" style="background:var(--accent); color:var(--bg-primary); border:none;"> <i data-lucide="shuffle" style="width:18px;height:18px;"></i> Embaralhar </button> <button id="btn-next" class="w-12 h-12 rounded-full flex items-center justify-center btn-floating" style="background:var(--bg-secondary); border:2px solid var(--accent); color:var(--accent);" aria-label="Próximo"> <i data-lucide="chevron-right" style="width:24px;height:24px;"></i> </button>
-    </div>
-   </main>
-  </div><!-- Hidden Inputs --> <input type="file" id="file-camera" accept="image/*" style="display:none;"> <input type="file" id="file-import" accept=".json" style="display:none;">
-  <script>
-// Extended data with 74 items
-const DATA = [{"id":"1","nome":"Ventre muscular","categoria":"Generalidades","regiao":"Miologia geral","tipo":"estrutura","definicao":"Porção contrátil e carnuda do músculo, formada principalmente por fibras musculares, responsável pela geração de força."},{"id":"2","nome":"Tendão muscular","categoria":"Generalidades","regiao":"Miologia geral","tipo":"estrutura","definicao":"Estrutura de tecido conjuntivo denso, rica em fibras colágenas, que une o músculo ao osso e transmite a força da contração."},{"id":"3","nome":"Aponeurose","categoria":"Generalidades","regiao":"Miologia geral","tipo":"estrutura","definicao":"Tendão largo e achatado, formado por tecido conjuntivo fibroso, que fixa músculos em áreas amplas."},{"id":"4","nome":"Fáscia muscular","categoria":"Generalidades","regiao":"Miologia geral","tipo":"estrutura","definicao":"Lâmina de tecido conjuntivo que envolve, separa e sustenta músculos ou grupos musculares."},{"id":"5","nome":"Septo intermuscular","categoria":"Generalidades","regiao":"Miologia geral","tipo":"estrutura","definicao":"Lâmina de tecido conjuntivo derivada da fáscia profunda que separa grupos musculares em compartimentos."},{"id":"6","nome":"Sartório","categoria":"Generalidades","regiao":"Coxa","tipo":"musculo","classificacao":"Músculo de fibra paralela / músculo longo","fixacao_proximal":"Espinha ilíaca ântero-superior","insercao_distal":"Face medial da tíbia proximal, na pata de ganso","acao":"Flexiona, abduz e roda lateralmente a coxa; flexiona o joelho e roda medialmente a perna com o joelho fletido"},{"id":"7","nome":"Oblíquo externo do abdome","categoria":"Generalidades","regiao":"Abdome","tipo":"musculo","classificacao":"Músculo de fibras oblíquas / músculo plano","fixacao_proximal":"Faces externas das costelas 5 a 12","insercao_distal":"Linha alba, tubérculo púbico e metade anterior da crista ilíaca","acao":"Flexiona o tronco, realiza rotação contralateral e comprime as vísceras abdominais"},{"id":"8","nome":"Extensor longo dos dedos","categoria":"Generalidades","regiao":"Perna","tipo":"musculo","classificacao":"Músculo semipeniforme / músculo policaudado","fixacao_proximal":"Côndilo lateral da tíbia, face anterior da fíbula e membrana interóssea","insercao_distal":"Falanges média e distal dos dedos 2 a 5","acao":"Estende os dedos 2 a 5 e dorsiflete o pé"},{"id":"9","nome":"Reto femoral","categoria":"Generalidades","regiao":"Coxa","tipo":"musculo","classificacao":"Músculo peniforme","fixacao_proximal":"Espinha ilíaca ântero-inferior e ílio acima do acetábulo","insercao_distal":"Base da patela e, por meio do ligamento patelar, tuberosidade da tíbia","acao":"Estende a perna no joelho e flexiona a coxa no quadril"},{"id":"10","nome":"Deltoide","categoria":"Generalidades","regiao":"Ombro","tipo":"musculo","classificacao":"Músculo multipeniforme","fixacao_proximal":"Terço lateral da clavícula, acrômio e espinha da escápula","insercao_distal":"Tuberosidade deltoidea do úmero","acao":"Abduz o braço; fibras anteriores flexionam e rodam medialmente; fibras posteriores estendem e rodam lateralmente"},{"id":"11","nome":"Peitoral maior","categoria":"Generalidades","regiao":"Tórax","tipo":"musculo","classificacao":"Músculo convergente ou triangular","fixacao_proximal":"Metade medial da clavícula, esterno, cartilagens costais das costelas 1 a 6 e lâmina anterior da bainha do reto do abdome","insercao_distal":"Lábio lateral do sulco intertubercular do úmero","acao":"Aduz e roda medialmente o braço; a porção clavicular flexiona o braço; a porção esternocostal auxilia a estender o braço fletido"},{"id":"12","nome":"Orbicular do olho","categoria":"Generalidades","regiao":"Face","tipo":"musculo","classificacao":"Músculo circular ou esfincteriano","fixacao_proximal":"Margem medial da órbita, osso frontal, maxila e ligamento palpebral medial","insercao_distal":"Pele ao redor da órbita e pálpebras","acao":"Fecha as pálpebras"},{"id":"13","nome":"Pronador quadrado","categoria":"Generalidades","regiao":"Antebraço","tipo":"musculo","classificacao":"Músculo curto","fixacao_proximal":"Quarto distal da face anterior da ulna","insercao_distal":"Quarto distal da face anterior do rádio","acao":"Prona o antebraço e estabiliza rádio e ulna"},{"id":"14","nome":"Bíceps braquial","categoria":"Generalidades","regiao":"Braço","tipo":"musculo","classificacao":"Músculo bíceps","fixacao_proximal":"Cabeça curta: processo coracoide da escápula; cabeça longa: tubérculo supraglenoidal da escápula","insercao_distal":"Tuberosidade do rádio e aponeurose do bíceps braquial","acao":"Supina e flexiona o antebraço; auxilia na flexão do braço"},{"id":"15","nome":"Tríceps braquial","categoria":"Generalidades","regiao":"Braço","tipo":"musculo","classificacao":"Músculo tríceps","fixacao_proximal":"Cabeça longa: tubérculo infraglenoidal da escápula; cabeça lateral: face posterior do úmero acima do sulco do nervo radial; cabeça medial: face posterior do úmero abaixo do sulco do nervo radial","insercao_distal":"Olécrano da ulna","acao":"Principal extensor do antebraço; a cabeça longa auxilia na extensão e adução do braço"},{"id":"16","nome":"Quadríceps femoral","categoria":"Generalidades","regiao":"Coxa","tipo":"musculo","classificacao":"Músculo quadríceps","fixacao_proximal":"Reto femoral: espinha ilíaca ântero-inferior e ílio acima do acetábulo; vasto lateral: trocânter maior e lábio lateral da linha áspera; vasto medial: linha intertrocantérica e lábio medial da linha áspera; vasto intermédio: faces anterior e lateral do corpo do fêmur","insercao_distal":"Patela e tuberosidade da tíbia por meio do ligamento patelar","acao":"Estende a perna; o reto femoral também flexiona a coxa"},{"id":"17","nome":"Tibial anterior","categoria":"Generalidades","regiao":"Perna","tipo":"musculo","classificacao":"Músculo fusiforme","fixacao_proximal":"Côndilo lateral e metade superior da face lateral da tíbia, membrana interóssea","insercao_distal":"Face medial e inferior do cuneiforme medial e base do 1º metatarso","acao":"Dorsiflete o tornozelo e inverte o pé"},{"id":"18","nome":"Trapézio","categoria":"Dorso","regiao":"Dorso","tipo":"musculo","classificacao":"Músculo superficial","fixacao_proximal":"Protuberância occipital externa, linha nucal superior, ligamento nucal e processos espinhosos de C7 a T12","insercao_distal":"Terço lateral da clavícula, acrômio e espinha da escápula","acao":"Eleva, retrai e deprime a escápula de acordo com a porção; participa da rotação superior da escápula"},{"id":"19","nome":"Latíssimo do dorso","categoria":"Dorso","regiao":"Dorso","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Processos espinhosos de T7 a T12, fáscia toracolombar, crista ilíaca e costelas 9 a 12","insercao_distal":"Assoalho do sulco intertubercular do úmero","acao":"Estende, aduz e roda medialmente o braço"},{"id":"20","nome":"Levantador da escápula","categoria":"Dorso","regiao":"Dorso","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Processos transversos de C1 a C4","insercao_distal":"Parte superior da borda medial da escápula","acao":"Eleva a escápula e promove rotação inferior da escápula"},{"id":"21","nome":"Romboide maior","categoria":"Dorso","regiao":"Dorso","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Processos espinhosos de T2 a T5","insercao_distal":"Borda medial da escápula abaixo da espinha da escápula","acao":"Retrai a escápula, roda inferiormente a escápula e a fixa à parede torácica"},{"id":"22","nome":"Romboide menor","categoria":"Dorso","regiao":"Dorso","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Ligamento nucal e processos espinhosos de C7 e T1","insercao_distal":"Borda medial da escápula ao nível da espinha da escápula","acao":"Retrai e estabiliza a escápula"},{"id":"23","nome":"Serrátil posterior superior","categoria":"Dorso","regiao":"Dorso","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Ligamento nucal e processos espinhosos de C7 a T3","insercao_distal":"Bordas superiores das costelas 2 a 5","acao":"Eleva as costelas e auxilia a inspiração"},{"id":"24","nome":"Serrátil posterior inferior","categoria":"Dorso","regiao":"Dorso","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Processos espinhosos de T11 a L2","insercao_distal":"Bordas inferiores das costelas 9 a 12","acao":"Deprime as costelas e auxilia a expiração"},{"id":"25","nome":"Eretor da espinha","categoria":"Dorso","regiao":"Dorso","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Cresta ilíaca, sacro, ligamentos sacroilíacos e processos espinhosos lombares","insercao_distal":"Costelas, processos transversos e processos espinhosos das vértebras torácicas e cervicais","acao":"Estende a coluna vertebral, inclina lateralmente a coluna e mantém a postura ereta"},{"id":"26","nome":"Peitoral menor","categoria":"Tórax","regiao":"Tórax","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Faces anteriores das costelas 3 a 5 próximas às cartilagens costais","insercao_distal":"Processo coracoide da escápula","acao":"Estabiliza a escápula puxando-a inferior e anteriormente; auxilia na inspiração quando a escápula está fixa"},{"id":"27","nome":"Serrátil anterior","categoria":"Tórax","regiao":"Tórax","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Faces externas das costelas 1 a 8","insercao_distal":"Face anterior da borda medial da escápula, especialmente no ângulo inferior","acao":"Protrai a escápula, promove rotação superior da escápula e a mantém aplicada à parede torácica"},{"id":"28","nome":"Intercostais externos","categoria":"Tórax","regiao":"Tórax","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Borda inferior da costela superior","insercao_distal":"Borda superior da costela inferior","acao":"Elevam as costelas durante a inspiração e mantêm os espaços intercostais"},{"id":"29","nome":"Intercostais internos","categoria":"Tórax","regiao":"Tórax","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Borda inferior da costela superior","insercao_distal":"Borda superior da costela inferior","acao":"A porção interóssea deprime as costelas na expiração; a porção intercondral pode elevá-las"},{"id":"30","nome":"Diafragma","categoria":"Tórax","regiao":"Tórax","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Processo xifoide, cartilagens costais e costelas 7 a 12, além dos corpos vertebrais de L1 a L3 por meio das cruras","insercao_distal":"Centro tendíneo do diafragma","acao":"Principal músculo da inspiração, aumentando o volume da cavidade torácica ao se contrair"},{"id":"31","nome":"Reto do abdome","categoria":"Abdome","regiao":"Abdome","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Crista púbica e sínfise púbica","insercao_distal":"Processo xifoide do esterno e cartilagens costais das costelas 5 a 7","acao":"Flexiona o tronco, comprime as vísceras abdominais e estabiliza a pelve"},{"id":"32","nome":"Oblíquo interno do abdome","categoria":"Abdome","regiao":"Abdome","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Crista ilíaca, ligamento inguinal e fáscia toracolombar","insercao_distal":"Bordas inferiores das costelas 10 a 12, linha alba e púbis por meio do tendão conjunto","acao":"Flexiona o tronco, realiza rotação ipsilateral e comprime as vísceras abdominais"},{"id":"33","nome":"Transverso do abdome","categoria":"Abdome","regiao":"Abdome","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Faces internas das cartilagens costais 7 a 12, fáscia toracolombar, crista ilíaca e terço lateral do ligamento inguinal","insercao_distal":"Linha alba, crista púbica e pecten do púbis por meio do tendão conjunto","acao":"Comprime e sustenta as vísceras abdominais e estabiliza o tronco e a coluna lombar"},{"id":"34","nome":"Quadrado do lombo","categoria":"Abdome","regiao":"Parede abdominal posterior","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Crista ilíaca e ligamento iliolombar","insercao_distal":"Borda inferior da costela 12 e processos transversos de L1 a L4","acao":"Inclina lateralmente a coluna lombar, estende o tronco bilateralmente e estabiliza a costela 12 durante a respiração"},{"id":"35","nome":"Subclávio","categoria":"Tórax","regiao":"Tórax","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Junção da 1ª costela com sua cartilagem costal","insercao_distal":"Face inferior do terço médio da clavícula","acao":"Fixa e deprime a clavícula; estabiliza a articulação esternoclavicular"},{"id":"36","nome":"Semiespinal do tórax","categoria":"Dorso","regiao":"Dorso profundo","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Processos transversos de T6 a T12","insercao_distal":"Processos espinhosos de C6 a T4","acao":"Estende a coluna e promove rotação contralateral"},{"id":"37","nome":"Multífidos","categoria":"Dorso","regiao":"Dorso profundo","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Sacro e processos transversos das vértebras","insercao_distal":"Processos espinhosos das vértebras superiores","acao":"Estabiliza a coluna, auxilia na extensão e rotação vertebral"},{"id":"38","nome":"Rotadores","categoria":"Dorso","regiao":"Dorso profundo","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Processos transversos das vértebras","insercao_distal":"Processos espinhosos da vértebra imediatamente superior","acao":"Promove rotação e estabilização vertebral"},{"id":"39","nome":"Intertransversários","categoria":"Dorso","regiao":"Dorso profundo","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Processos transversos das vértebras","insercao_distal":"Processos transversos adjacentes","acao":"Realiza inclinação lateral da coluna e auxilia na estabilização segmentar"},{"id":"40","nome":"Interespinais","categoria":"Dorso","regiao":"Dorso profundo","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Processos espinhosos das vértebras","insercao_distal":"Processos espinhosos adjacentes","acao":"Auxilia na extensão da coluna"},{"id":"41","nome":"Levantadores das costelas","categoria":"Dorso","regiao":"Dorso profundo","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Processos transversos de C7 a T11","insercao_distal":"Costela imediatamente inferior, entre o tubérculo e o ângulo costal","acao":"Elevam as costelas e auxiliam na inspiração"},{"id":"42","nome":"Espinal do tórax","categoria":"Dorso","regiao":"Dorso","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Processos espinhosos das vértebras torácicas inferiores e lombares superiores","insercao_distal":"Processos espinhosos das vértebras torácicas superiores","acao":"Estende a coluna torácica"},{"id":"43","nome":"Longuíssimo","categoria":"Dorso","regiao":"Dorso","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Crista ilíaca, sacro e processos espinhosos lombares","insercao_distal":"Processos transversos torácicos e costelas","acao":"Estende e inclina lateralmente a coluna"},{"id":"44","nome":"Íliocostal","categoria":"Dorso","regiao":"Dorso","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Crista ilíaca e sacro","insercao_distal":"Ângulos das costelas inferiores","acao":"Estende e inclina lateralmente a coluna"},{"id":"45","nome":"Subcostais","categoria":"Tórax","regiao":"Tórax","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Face interna das costelas inferiores, próximo ao ângulo costal","insercao_distal":"Face interna da costela situada 2 ou 3 níveis abaixo","acao":"Deprimem as costelas e auxiliam na expiração"},{"id":"46","nome":"Transverso do tórax","categoria":"Tórax","regiao":"Tórax","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Face posterior do corpo do esterno e processo xifoide","insercao_distal":"Faces internas das cartilagens costais das costelas 2 a 6","acao":"Deprime as costelas e auxilia na expiração"},{"id":"47","nome":"Flexor curto do hálux","categoria":"Pé","regiao":"Pé","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Face plantar do cuboide e cuneiforme lateral, além de expansões do tendão do tibial posterior","insercao_distal":"Ambos os lados da base da falange proximal do hálux","acao":"Flexiona a articulação metatarsofalângica do hálux"},{"id":"48","nome":"Digástrico","categoria":"Pescoço","regiao":"Pescoço","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Ventre anterior: fossa digástrica da mandíbula; ventre posterior: incisura mastoidea do osso temporal","insercao_distal":"Tendão intermediário preso ao osso hioide","acao":"Eleva o hioide; quando o hioide está fixo, deprime a mandíbula"},{"id":"49","nome":"Estilo-hioideo","categoria":"Pescoço","regiao":"Pescoço","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Processo estiloide do osso temporal","insercao_distal":"Corpo do osso hioide","acao":"Eleva e retrai o hioide"},{"id":"50","nome":"Milo-hioideo","categoria":"Pescoço","regiao":"Pescoço","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Linha miloiodia da mandíbula","insercao_distal":"Corpo do osso hioide e rafe mediana","acao":"Eleva o assoalho da boca e o hioide; deprime a mandíbula"},{"id":"51","nome":"Bucinador","categoria":"Face","regiao":"Face","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Processos alveolares dos ossos maxilar e mandibular","insercao_distal":"Ângulo da boca","acao":"Comprime a bochecha contra os dentes; importante na mastigação"},{"id":"52","nome":"Masseter","categoria":"Face","regiao":"Face","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Arco zigomático","insercao_distal":"Face externa da mandíbula","acao":"Eleva a mandíbula durante a mastigação"},{"id":"53","nome":"Temporal","categoria":"Face","regiao":"Face","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Fossa temporal e fáscia temporal","insercao_distal":"Processo coronoide da mandíbula","acao":"Eleva a mandíbula e participa da mastigação"},{"id":"54","nome":"Pterigóideo medial","categoria":"Face","regiao":"Face","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Fossa pterigoidea","insercao_distal":"Face medial da mandíbula","acao":"Eleva a mandíbula e auxilia na mastigação"},{"id":"55","nome":"Pterigóideo lateral","categoria":"Face","regiao":"Face","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Asas da apófise pterigoidea e superfície infratemporal da asa maior do esfenóide","insercao_distal":"Disco articular e cápsula da articulação temporomandibular","acao":"Realiza movimentos de lateralidade e protrusão da mandíbula"},{"id":"56","nome":"Orbicular da boca","categoria":"Face","regiao":"Face","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Músculos e estruturas ao redor da boca","insercao_distal":"Pele ao redor da boca","acao":"Fecha e projeta os lábios"},{"id":"57","nome":"Zigomático maior","categoria":"Face","regiao":"Face","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Processo zigomático do osso temporal e osso zigomático","insercao_distal":"Ângulo da boca","acao":"Eleva e puxa lateralmente o lábio superior, expressão de sorriso"},{"id":"58","nome":"Zigomático menor","categoria":"Face","regiao":"Face","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Osso zigomático","insercao_distal":"Lábio superior","acao":"Eleva o lábio superior"},{"id":"59","nome":"Supra-espinal","categoria":"Dorso","regiao":"Ombro","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Fossa supraespinhal da escápula","insercao_distal":"Tubérculo maior do úmero","acao":"Abduz o braço nas primeiras 15 graus de movimento"},{"id":"60","nome":"Infraespinal","categoria":"Dorso","regiao":"Ombro","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Fossa infraespinhal da escápula","insercao_distal":"Tubérculo maior do úmero","acao":"Roda lateralmente o braço"},{"id":"61","nome":"Redondo menor","categoria":"Dorso","regiao":"Ombro","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Borda lateral da escápula","insercao_distal":"Tubérculo maior do úmero","acao":"Roda lateralmente o braço"},{"id":"62","nome":"Redondo maior","categoria":"Dorso","regiao":"Ombro","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Ângulo inferior da escápula","insercao_distal":"Sulco intertubercular do úmero","acao":"Estende, aduz e roda medialmente o braço"},{"id":"63","nome":"Subescapular","categoria":"Dorso","regiao":"Ombro","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Fossa subescapular da escápula","insercao_distal":"Tubérculo menor do úmero","acao":"Roda medialmente o braço"},{"id":"64","nome":"Supinador","categoria":"Antebraço","regiao":"Antebraço","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Côndilo lateral do úmero, ligamento radial colateral e crista supinadora da ulna","insercao_distal":"Face anterior e lateral do rádio proximal","acao":"Supina o antebraço"},{"id":"65","nome":"Pronador redondo","categoria":"Antebraço","regiao":"Antebraço","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Epicôndilo medial do úmero e processo coronoide da ulna","insercao_distal":"Face lateral do corpo do rádio","acao":"Prona o antebraço e auxilia na flexão do cotovelo"},{"id":"66","nome":"Flexor carpo radial","categoria":"Antebraço","regiao":"Antebraço","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Epicôndilo medial do úmero","insercao_distal":"Bases dos ossos metacárpicos 2 e 3","acao":"Flexiona o punho e auxilia na flexão do cotovelo"},{"id":"67","nome":"Flexor carpo ulnar","categoria":"Antebraço","regiao":"Antebraço","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Epicôndilo medial do úmero e olécrano da ulna","insercao_distal":"Osso pisiforme, hamato e metacárpico 5","acao":"Flexiona e aduz (desvia ulnarmente) o punho"},{"id":"68","nome":"Extensor carpo radial longo","categoria":"Antebraço","regiao":"Antebraço","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Crista supracondilar lateral do úmero","insercao_distal":"Base do osso metacárpico 2","acao":"Estende e abduz (desvia radialmente) o punho"},{"id":"69","nome":"Extensor carpo radial curto","categoria":"Antebraço","regiao":"Antebraço","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Epicôndilo lateral do úmero","insercao_distal":"Base do osso metacárpico 3","acao":"Estende e abduz o punho"},{"id":"70","nome":"Extensor carpo ulnar","categoria":"Antebraço","regiao":"Antebraço","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Epicôndilo lateral do úmero e olécrano da ulna","insercao_distal":"Base do osso metacárpico 5","acao":"Estende e aduz o punho"},{"id":"71","nome":"Solear","categoria":"Perna","regiao":"Perna","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Face posterior da fíbula e linha do solear da tíbia","insercao_distal":"Tuberosidade do calcâneo por meio do tendão de Aquiles","acao":"Flexiona plantarmente o pé (plantarflexão)"},{"id":"72","nome":"Gastrocnêmio","categoria":"Perna","regiao":"Perna","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Côndilo medial e lateral do fêmur (duas cabeças)","insercao_distal":"Tuberosidade do calcâneo por meio do tendão de Aquiles","acao":"Flexiona plantarmente o pé e flexiona o joelho"},{"id":"73","nome":"Fibular longo","categoria":"Perna","regiao":"Perna","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Cabeça e face lateral da fíbula","insercao_distal":"Base do 1º metatarso e cuneiforme medial","acao":"Flexiona plantarmente o pé e eversão do pé"},{"id":"74","nome":"Tibial posterior","categoria":"Perna","regiao":"Perna","tipo":"musculo","classificacao":"Músculo","fixacao_proximal":"Face posterior da tíbia e fíbula, membrana interóssea","insercao_distal":"Tuberosidade do navicular e outras estruturas do tarso","acao":"Flexiona plantarmente o pé e inverte o pé"}];
 
-let userCards = [];
-let allData = [];
-let regions = [];
-let activeFilter = null;
-let filtered = [];
-let idx = 0;
-let isDarkMode = true;
-let currentAudioContext = null;
-
-// Utility: Play sound on card flip
-function playFlipSound() {
-  try {
-    if (!currentAudioContext) {
-      currentAudioContext = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    const ctx = currentAudioContext;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.frequency.setValueAtTime(800, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1);
-    gain.gain.setValueAtTime(0.1, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.1);
-  } catch (e) {}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas de Miologia</title>
+<link rel="manifest" href="manifest.json">
+<style>
+body{
+font-family:Arial,Helvetica,sans-serif;
+background:#0a1020;
+color:white;
+margin:0;
+padding:0;
 }
 
-// Theme toggle
-function toggleTheme() {
-  isDarkMode = !isDarkMode;
-  document.getElementById('app-body').classList.toggle('light-mode');
-  const themeBtn = document.getElementById('btn-theme');
-  themeBtn.innerHTML = isDarkMode ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
-  lucide.createIcons();
-  localStorage.setItem('miologia-theme', isDarkMode ? 'dark' : 'light');
+header{
+padding:20px;
+text-align:center;
+background:#111a33;
+font-weight:bold;
 }
 
-// Init theme from localStorage
-function initTheme() {
-  const saved = localStorage.getItem('miologia-theme');
-  if (saved === 'light') {
-    isDarkMode = false;
-    document.getElementById('app-body').classList.add('light-mode');
-    document.getElementById('btn-theme').innerHTML = '<i data-lucide="moon"></i>';
-  }
+#menu{
+padding:20px;
+display:flex;
+flex-direction:column;
+gap:10px;
 }
 
-// Data SDK Handler
-const dataHandler = {
-  onDataChanged(data) {
-    userCards = data || [];
-    updateDataAndFilters();
-  }
-};
-
-async function initDataSDK() {
-  const result = await window.dataSdk.init(dataHandler);
-  if (!result.isOk) {
-    showToast('Erro ao inicializar banco de dados', 'error');
-  }
+button{
+padding:14px;
+border:none;
+border-radius:12px;
+font-size:16px;
+cursor:pointer;
+background:#2a4cff;
+color:white;
 }
 
-function updateDataAndFilters() {
-  allData = [...DATA, ...userCards];
-  regions = [...new Set(allData.map(d => d.regiao))].sort();
-  renderFilters();
-  applyFilter();
+#muscleView{
+display:none;
+padding:20px;
 }
 
-function renderFilters() {
-  const filtersEl = document.getElementById('filters');
-  filtersEl.innerHTML = '';
-  regions.forEach(r => {
-    const btn = document.createElement('button');
-    btn.className = 'filter-btn tag';
-    btn.style.cssText = 'background:var(--bg-tertiary); color:var(--text-secondary); border:1px solid var(--bg-primary);';
-    btn.textContent = r;
-    btn.addEventListener('click', () => {
-      activeFilter === r ? (activeFilter = null) : (activeFilter = r);
-      applyFilter();
-    });
-    filtersEl.appendChild(btn);
-  });
+.tabs{
+display:flex;
+gap:10px;
+margin-top:15px;
 }
 
-function applyFilter() {
-  filtered = activeFilter ? allData.filter(d => d.regiao === activeFilter) : [...allData];
-  idx = 0;
-  document.querySelectorAll('.filter-btn').forEach(b => {
-    const isActive = b.textContent === activeFilter;
-    b.style.background = isActive ? 'var(--accent)' : 'var(--bg-tertiary)';
-    b.style.color = isActive ? 'var(--bg-primary)' : 'var(--text-secondary)';
-  });
-  renderCard();
+.tab{
+padding:10px;
+background:#1c2b55;
+border-radius:10px;
+cursor:pointer;
 }
 
-function renderCard() {
-  if (!filtered.length) return;
-  const item = filtered[idx];
-  const inner = document.getElementById('card-inner');
-  inner.classList.remove('flipped');
-  inner.parentElement.classList.add('animate-in');
-  setTimeout(() => inner.parentElement.classList.remove('animate-in'), 400);
-
-  document.getElementById('current-num').textContent = idx + 1;
-  document.getElementById('total-num').textContent = filtered.length;
-  document.getElementById('card-name').textContent = item.nome;
-
-  const tagsEl = document.getElementById('card-tags');
-  tagsEl.innerHTML = `<span class="tag" style="background:var(--accent); color:var(--bg-primary);">${item.regiao}</span>`;
-
-  document.getElementById('card-type-label').textContent = item.tipo === 'musculo' ? '💪 Músculo' : '🦴 Estrutura';
-
-  const photoFront = document.getElementById('photo-front');
-  if (item.foto_url) {
-    photoFront.innerHTML = `<img src="${item.foto_url}" alt="Foto" class="card-photo" loading="lazy" onerror="this.style.display='none';">`;
-    photoFront.style.display = 'block';
-  } else {
-    photoFront.innerHTML = '';
-    photoFront.style.display = 'none';
-  }
-
-  const det = document.getElementById('card-details');
-  let html = '';
-  const field = (label, val) => val ? `<div><p class="font-semibold uppercase tracking-wide" style="color:var(--accent);margin-bottom:4px;font-size:0.75rem;">${label}</p><p style="color:var(--text-secondary);">${val}</p></div>` : '';
-
-  if (item.tipo === 'estrutura') {
-    html = field('Definição', item.definicao);
-  } else {
-    html = field('Classificação', item.classificacao) + field('Fixação Proximal', item.fixacao_proximal) + field('Inserção Distal', item.insercao_distal) + field('Ação', item.acao);
-  }
-  det.innerHTML = html;
-
-  const photoBack = document.getElementById('photo-back');
-  if (item.foto_url) {
-    photoBack.innerHTML = `<img src="${item.foto_url}" alt="Foto" class="card-photo" loading="lazy" onerror="this.style.display='none';">`;
-    photoBack.style.display = 'block';
-  } else {
-    photoBack.innerHTML = '';
-    photoBack.style.display = 'none';
-  }
-
-  lucide.createIcons();
+.tabContent{
+margin-top:15px;
+background:#121d3a;
+padding:15px;
+border-radius:12px;
 }
 
-function showToast(message, type = 'success') {
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.style.cssText = `position:fixed;bottom:20px;left:20px;right:20px;max-width:400px;padding:14px 18px;border-radius:0.75rem;font-size:14px;z-index:9999;font-weight:500;${type === 'error' ? 'background:var(--error);color:white;' : 'background:var(--success);color:white;'}`;
-  toast.textContent = message;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
+.back{
+margin-top:20px;
+background:#ff4c6a;
 }
+</style>
+</head>
 
-// Camera
-document.getElementById('btn-camera').addEventListener('click', () => document.getElementById('file-camera').click());
-document.getElementById('file-camera').addEventListener('change', async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = async (event) => {
-    const base64 = event.target.result;
-    if (!filtered.length) return showToast('Nenhum card selecionado', 'error');
-    const item = filtered[idx];
-    const updated = { ...item, foto_url: base64 };
-    if (item.__backendId) {
-      const result = await window.dataSdk.update(updated);
-      if (result.isOk) {
-        showToast('Foto adicionada ✓');
-        renderCard();
-      } else {
-        showToast('Erro ao adicionar foto', 'error');
-      }
-    } else {
-      const newCard = { id: `custom-${Date.now()}`, nome: item.nome, categoria: item.categoria, regiao: item.regiao, tipo: item.tipo, classificacao: item.classificacao || '', fixacao_proximal: item.fixacao_proximal || '', insercao_distal: item.insercao_distal || '', acao: item.acao || '', definicao: item.definicao || '', foto_url: base64 };
-      const result = await window.dataSdk.create(newCard);
-      if (result.isOk) {
-        showToast('Card criado com foto ✓');
-      } else {
-        showToast('Erro ao criar card', 'error');
-      }
-    }
-  };
-  reader.readAsDataURL(file);
-  e.target.value = '';
-});
+<body>
 
-// Card camera button
-document.getElementById('btn-card-camera').addEventListener('click', (e) => {
-  e.stopPropagation();
-  document.getElementById('file-camera').click();
-});
+<header>Atlas de Miologia</header>
 
-// Card import button
-document.getElementById('btn-card-import').addEventListener('click', (e) => {
-  e.stopPropagation();
-  document.getElementById('file-import').click();
-});
+<div id="menu"></div>
 
-// Import JSON
-document.getElementById('btn-import').addEventListener('click', () => document.getElementById('file-import').click());
-document.getElementById('file-import').addEventListener('change', async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = async (event) => {
-    try {
-      const json = JSON.parse(event.target.result);
-      const cards = Array.isArray(json) ? json : [json];
-      let imported = 0;
-      for (const card of cards) {
-        if (imported + userCards.length >= 999) {
-          showToast('Limite de 999 cards atingido', 'error');
-          break;
-        }
-        const result = await window.dataSdk.create({ id: `custom-${Date.now()}-${Math.random()}`, ...card });
-        if (result.isOk) imported++;
-      }
-      showToast(`${imported} cards importados ✓`);
-    } catch (err) {
-      showToast('Erro ao importar JSON', 'error');
-    }
-  };
-  reader.readAsText(file);
-  e.target.value = '';
-});
+<div id="muscleView">
+<h2 id="muscleTitle"></h2>
 
-// Theme button
-document.getElementById('btn-theme').addEventListener('click', toggleTheme);
+<div class="tabs">
+<div class="tab" onclick="showTab('acao')">Ação</div>
+<div class="tab" onclick="showTab('origem')">Fixação proximal</div>
+<div class="tab" onclick="showTab('insercao')">Inserção</div>
+</div>
 
-// Card flip with sound
-document.getElementById('card-container').addEventListener('click', () => {
-  playFlipSound();
-  document.getElementById('card-inner').classList.toggle('flipped');
-});
+<div id="tabContent" class="tabContent"></div>
 
-// Card camera button
-document.getElementById('btn-card-camera').addEventListener('click', (e) => {
-  e.stopPropagation();
-  document.getElementById('file-camera').click();
-});
+<button class="back" onclick="back()">Voltar</button>
 
-// Card import button
-document.getElementById('btn-card-import').addEventListener('click', (e) => {
-  e.stopPropagation();
-  document.getElementById('file-import').click();
-});
+</div>
 
-// Navigation
-document.getElementById('btn-prev').addEventListener('click', (e) => {
-  e.stopPropagation();
-  if (filtered.length) { idx = (idx - 1 + filtered.length) % filtered.length; renderCard(); }
-});
-document.getElementById('btn-next').addEventListener('click', (e) => {
-  e.stopPropagation();
-  if (filtered.length) { idx = (idx + 1) % filtered.length; renderCard(); }
-});
-document.getElementById('btn-shuffle').addEventListener('click', (e) => {
-  e.stopPropagation();
-  for (let i = filtered.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [filtered[i], filtered[j]] = [filtered[j], filtered[i]]; }
-  idx = 0; renderCard();
-});
+<script src="data-musculos.js"></script>
 
-// Element SDK
-const defaultConfig = {
-  app_title: 'Miologia',
-  background_color: '#0f1117',
-  surface_color: '#1a1d2b',
-  text_color: '#f0f0f4',
-  accent_color: '#e8cda0',
-  muted_color: '#6b7084',
-  font_family: 'Playfair Display',
-  font_size: 16
-};
-
-function applyConfig(config) {
-  const title = config.app_title || defaultConfig.app_title;
-  document.getElementById('main-title').textContent = title;
-}
-
-window.elementSdk.init({
-  defaultConfig,
-  onConfigChange: async (config) => { applyConfig(config); },
-  mapToCapabilities: (config) => ({
-    recolorables: [
-      { get: () => config.background_color || defaultConfig.background_color, set: v => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
-      { get: () => config.surface_color || defaultConfig.surface_color, set: v => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
-      { get: () => config.text_color || defaultConfig.text_color, set: v => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
-      { get: () => config.accent_color || defaultConfig.accent_color, set: v => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); } },
-      { get: () => config.muted_color || defaultConfig.muted_color, set: v => { config.muted_color = v; window.elementSdk.setConfig({ muted_color: v }); } }
-    ],
-    borderables: [],
-    fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: v => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
-    fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: v => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } }
-  }),
-  mapToEditPanelValues: (config) => new Map([
-    ['app_title', config.app_title || defaultConfig.app_title]
-  ])
-});
-
-// PWA Service Worker
-if ('serviceWorker' in navigator) {
-  const sw = `self.addEventListener('install', e => self.skipWaiting()); self.addEventListener('activate', e => self.clients.claim()); self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => new Response('Offline'))));`;
-  const blob = new Blob([sw], { type: 'application/javascript' });
-  const swUrl = URL.createObjectURL(blob);
-  navigator.serviceWorker.register(swUrl).catch(() => {});
-}
-
-// Initialize
-initTheme();
-initDataSDK();
-updateDataAndFilters();
-lucide.createIcons();
-</script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ee996f4931c646e',t:'MTc3NjU3NzM4NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 <script>
 
-if ("serviceWorker" in navigator) {
+const menu = document.getElementById("menu")
+const muscleView = document.getElementById("muscleView")
+const title = document.getElementById("muscleTitle")
+const tabContent = document.getElementById("tabContent")
 
-window.addEventListener("load", () => {
+let current
 
-navigator.serviceWorker.register("./sw.js")
-.then(() => console.log("PWA ativo"))
-.catch(err => console.log(err))
+muscles.forEach(m=>{
+
+let b=document.createElement("button")
+b.innerText=m.nome
+
+b.onclick=()=>{
+
+current=m
+menu.style.display="none"
+muscleView.style.display="block"
+title.innerText=m.nome
+
+showTab("acao")
+
+}
+
+menu.appendChild(b)
 
 })
 
+function showTab(t){
+
+if(!current)return
+
+if(t==="acao")tabContent.innerText=current.acao
+if(t==="origem")tabContent.innerText=current.origem
+if(t==="insercao")tabContent.innerText=current.insercao
+
+}
+
+function back(){
+
+muscleView.style.display="none"
+menu.style.display="flex"
+
+}
+
+if("serviceWorker" in navigator){
+navigator.serviceWorker.register("sw.js")
 }
 
 </script>
+
+</body>
 </html>
