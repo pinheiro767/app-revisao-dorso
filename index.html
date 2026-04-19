@@ -7,36 +7,31 @@
 <title>Atlas de Miologia</title>
 <link rel="manifest" href="manifest.json">
 <style>
-body{font-family:Arial;margin:0;background:#0a1020;color:white}
-header{padding:16px;text-align:center;background:#121a33}
+body{font-family:Arial;background:#0a1020;color:white;margin:0}
+header{padding:16px;text-align:center;background:#141d3a}
 .container{padding:16px}
 button{padding:12px;margin:6px;border:none;border-radius:10px;background:#3a6cff;color:white;cursor:pointer}
 .tabs button{background:#1f2e5a}
-.gallery img{width:100px;margin:6px;border-radius:8px}
+.gallery img{width:110px;margin:6px;border-radius:8px}
 .hidden{display:none}
 </style>
 </head>
-
 <body>
 
-<header>Atlas de Miologia</header>
+<header>Atlas de Miologia – 165 Itens</header>
 
 <div class="container">
 
-<div id="menu">
-<button onclick="openMuscle('Trapézio')">Trapézio</button>
-<button onclick="openMuscle('Latíssimo do dorso')">Latíssimo do dorso</button>
-<button onclick="openMuscle('Reto do abdome')">Reto do abdome</button>
-</div>
+<div id="menu"></div>
 
-<div id="muscleScreen" class="hidden">
+<div id="screen" class="hidden">
 
-<h2 id="muscleTitle"></h2>
+<h2 id="title"></h2>
 
 <div class="tabs">
-<button onclick="selectTab('acao')">Ação</button>
-<button onclick="selectTab('fixacao')">Fixação proximal</button>
-<button onclick="selectTab('insercao')">Inserção</button>
+<button onclick="tab('acao')">Ação</button>
+<button onclick="tab('fixacao')">Fixação proximal</button>
+<button onclick="tab('insercao')">Inserção</button>
 </div>
 
 <br>
@@ -54,61 +49,63 @@ button{padding:12px;margin:6px;border:none;border-radius:10px;background:#3a6cff
 
 <script>
 
-let currentMuscle = ""
-let currentTab = "acao"
+const items = ["1. Estrutura anat\u00f4mica 1", "2. Estrutura anat\u00f4mica 2", "3. Estrutura anat\u00f4mica 3", "4. Estrutura anat\u00f4mica 4", "5. Estrutura anat\u00f4mica 5", "6. Estrutura anat\u00f4mica 6", "7. Estrutura anat\u00f4mica 7", "8. Estrutura anat\u00f4mica 8", "9. Estrutura anat\u00f4mica 9", "10. Estrutura anat\u00f4mica 10", "11. Estrutura anat\u00f4mica 11", "12. Estrutura anat\u00f4mica 12", "13. Estrutura anat\u00f4mica 13", "14. Estrutura anat\u00f4mica 14", "15. Estrutura anat\u00f4mica 15", "16. Estrutura anat\u00f4mica 16", "17. Estrutura anat\u00f4mica 17", "18. Estrutura anat\u00f4mica 18", "19. Estrutura anat\u00f4mica 19", "20. Estrutura anat\u00f4mica 20", "21. Estrutura anat\u00f4mica 21", "22. Estrutura anat\u00f4mica 22", "23. Estrutura anat\u00f4mica 23", "24. Estrutura anat\u00f4mica 24", "25. Estrutura anat\u00f4mica 25", "26. Estrutura anat\u00f4mica 26", "27. Estrutura anat\u00f4mica 27", "28. Estrutura anat\u00f4mica 28", "29. Estrutura anat\u00f4mica 29", "30. Estrutura anat\u00f4mica 30", "31. Estrutura anat\u00f4mica 31", "32. Estrutura anat\u00f4mica 32", "33. Estrutura anat\u00f4mica 33", "34. Estrutura anat\u00f4mica 34", "35. Estrutura anat\u00f4mica 35", "36. Estrutura anat\u00f4mica 36", "37. Estrutura anat\u00f4mica 37", "38. Estrutura anat\u00f4mica 38", "39. Estrutura anat\u00f4mica 39", "40. Estrutura anat\u00f4mica 40", "41. Estrutura anat\u00f4mica 41", "42. Estrutura anat\u00f4mica 42", "43. Estrutura anat\u00f4mica 43", "44. Estrutura anat\u00f4mica 44", "45. Estrutura anat\u00f4mica 45", "46. Estrutura anat\u00f4mica 46", "47. Estrutura anat\u00f4mica 47", "48. Estrutura anat\u00f4mica 48", "49. Estrutura anat\u00f4mica 49", "50. Estrutura anat\u00f4mica 50", "51. Estrutura anat\u00f4mica 51", "52. Estrutura anat\u00f4mica 52", "53. Estrutura anat\u00f4mica 53", "54. Estrutura anat\u00f4mica 54", "55. Estrutura anat\u00f4mica 55", "56. Estrutura anat\u00f4mica 56", "57. Estrutura anat\u00f4mica 57", "58. Estrutura anat\u00f4mica 58", "59. Estrutura anat\u00f4mica 59", "60. Estrutura anat\u00f4mica 60", "61. Estrutura anat\u00f4mica 61", "62. Estrutura anat\u00f4mica 62", "63. Estrutura anat\u00f4mica 63", "64. Estrutura anat\u00f4mica 64", "65. Estrutura anat\u00f4mica 65", "66. Estrutura anat\u00f4mica 66", "67. Estrutura anat\u00f4mica 67", "68. Estrutura anat\u00f4mica 68", "69. Estrutura anat\u00f4mica 69", "70. Estrutura anat\u00f4mica 70", "71. Estrutura anat\u00f4mica 71", "72. Estrutura anat\u00f4mica 72", "73. Estrutura anat\u00f4mica 73", "74. Estrutura anat\u00f4mica 74", "75. Estrutura anat\u00f4mica 75", "76. Estrutura anat\u00f4mica 76", "77. Estrutura anat\u00f4mica 77", "78. Estrutura anat\u00f4mica 78", "79. Estrutura anat\u00f4mica 79", "80. Estrutura anat\u00f4mica 80", "81. Estrutura anat\u00f4mica 81", "82. Estrutura anat\u00f4mica 82", "83. Estrutura anat\u00f4mica 83", "84. Estrutura anat\u00f4mica 84", "85. Estrutura anat\u00f4mica 85", "86. Estrutura anat\u00f4mica 86", "87. Estrutura anat\u00f4mica 87", "88. Estrutura anat\u00f4mica 88", "89. Estrutura anat\u00f4mica 89", "90. Estrutura anat\u00f4mica 90", "91. Estrutura anat\u00f4mica 91", "92. Estrutura anat\u00f4mica 92", "93. Estrutura anat\u00f4mica 93", "94. Estrutura anat\u00f4mica 94", "95. Estrutura anat\u00f4mica 95", "96. Estrutura anat\u00f4mica 96", "97. Estrutura anat\u00f4mica 97", "98. Estrutura anat\u00f4mica 98", "99. Estrutura anat\u00f4mica 99", "100. Estrutura anat\u00f4mica 100", "101. Estrutura anat\u00f4mica 101", "102. Estrutura anat\u00f4mica 102", "103. Estrutura anat\u00f4mica 103", "104. Estrutura anat\u00f4mica 104", "105. Estrutura anat\u00f4mica 105", "106. Estrutura anat\u00f4mica 106", "107. Estrutura anat\u00f4mica 107", "108. Estrutura anat\u00f4mica 108", "109. Estrutura anat\u00f4mica 109", "110. Estrutura anat\u00f4mica 110", "111. Estrutura anat\u00f4mica 111", "112. Estrutura anat\u00f4mica 112", "113. Estrutura anat\u00f4mica 113", "114. Estrutura anat\u00f4mica 114", "115. Estrutura anat\u00f4mica 115", "116. Estrutura anat\u00f4mica 116", "117. Estrutura anat\u00f4mica 117", "118. Estrutura anat\u00f4mica 118", "119. Estrutura anat\u00f4mica 119", "120. Estrutura anat\u00f4mica 120", "121. Estrutura anat\u00f4mica 121", "122. Estrutura anat\u00f4mica 122", "123. Estrutura anat\u00f4mica 123", "124. Estrutura anat\u00f4mica 124", "125. Estrutura anat\u00f4mica 125", "126. Estrutura anat\u00f4mica 126", "127. Estrutura anat\u00f4mica 127", "128. Estrutura anat\u00f4mica 128", "129. Estrutura anat\u00f4mica 129", "130. Estrutura anat\u00f4mica 130", "131. Estrutura anat\u00f4mica 131", "132. Estrutura anat\u00f4mica 132", "133. Estrutura anat\u00f4mica 133", "134. Estrutura anat\u00f4mica 134", "135. Estrutura anat\u00f4mica 135", "136. Estrutura anat\u00f4mica 136", "137. Estrutura anat\u00f4mica 137", "138. Estrutura anat\u00f4mica 138", "139. Estrutura anat\u00f4mica 139", "140. Estrutura anat\u00f4mica 140", "141. Estrutura anat\u00f4mica 141", "142. Estrutura anat\u00f4mica 142", "143. Estrutura anat\u00f4mica 143", "144. Estrutura anat\u00f4mica 144", "145. Estrutura anat\u00f4mica 145", "146. Estrutura anat\u00f4mica 146", "147. Estrutura anat\u00f4mica 147", "148. Estrutura anat\u00f4mica 148", "149. Estrutura anat\u00f4mica 149", "150. Estrutura anat\u00f4mica 150", "151. Estrutura anat\u00f4mica 151", "152. Estrutura anat\u00f4mica 152", "153. Estrutura anat\u00f4mica 153", "154. Estrutura anat\u00f4mica 154", "155. Estrutura anat\u00f4mica 155", "156. Estrutura anat\u00f4mica 156", "157. Estrutura anat\u00f4mica 157", "158. Estrutura anat\u00f4mica 158", "159. Estrutura anat\u00f4mica 159", "160. Estrutura anat\u00f4mica 160", "161. Estrutura anat\u00f4mica 161", "162. Estrutura anat\u00f4mica 162", "163. Estrutura anat\u00f4mica 163", "164. Estrutura anat\u00f4mica 164", "165. Estrutura anat\u00f4mica 165"];
 
-function openMuscle(name){
-currentMuscle = name
-document.getElementById("menu").style.display="none"
-document.getElementById("muscleScreen").classList.remove("hidden")
-document.getElementById("muscleTitle").innerText=name
-loadGallery()
+let current=""
+let currentTab="acao"
+
+const menu=document.getElementById("menu")
+
+items.forEach(i=>{
+let b=document.createElement("button")
+b.innerText=i
+b.onclick=()=>openItem(i)
+menu.appendChild(b)
+})
+
+function openItem(name){
+current=name
+menu.style.display="none"
+document.getElementById("screen").classList.remove("hidden")
+document.getElementById("title").innerText=name
+load()
 }
 
 function back(){
-document.getElementById("menu").style.display="block"
-document.getElementById("muscleScreen").classList.add("hidden")
+menu.style.display="block"
+document.getElementById("screen").classList.add("hidden")
 }
 
-function selectTab(tab){
-currentTab = tab
-loadGallery()
+function tab(t){
+currentTab=t
+load()
 }
 
-function storageKey(){
-return currentMuscle + "_" + currentTab
+function key(){
+return current+"_"+currentTab
 }
 
-function loadGallery(){
-let gallery=document.getElementById("gallery")
-gallery.innerHTML=""
-
-let data=JSON.parse(localStorage.getItem(storageKey())||"[]")
-
-data.forEach((src,i)=>{
+function load(){
+let g=document.getElementById("gallery")
+g.innerHTML=""
+let data=JSON.parse(localStorage.getItem(key())||"[]")
+data.forEach(src=>{
 let img=document.createElement("img")
 img.src=src
-gallery.appendChild(img)
+g.appendChild(img)
 })
 }
 
 function addPhoto(e){
-
 let file=e.target.files[0]
 let reader=new FileReader()
-
 reader.onload=function(){
-
-let data=JSON.parse(localStorage.getItem(storageKey())||"[]")
+let data=JSON.parse(localStorage.getItem(key())||"[]")
 data.push(reader.result)
-localStorage.setItem(storageKey(),JSON.stringify(data))
-
-loadGallery()
-
+localStorage.setItem(key(),JSON.stringify(data))
+load()
 }
-
 reader.readAsDataURL(file)
-
 }
 
 if('serviceWorker' in navigator){
